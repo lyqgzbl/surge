@@ -1,39 +1,38 @@
 /*
- * Surge Script: 用於修正特定網頁的 JavaScript 錯誤 (穩健版)
+ * Surge Script: 用於修正特定網頁的 JavaScript 錯誤 (正規表示式終極版)
  *
- * v2.0 更新日誌:
- * 1. 增加對 $response.body 的安全檢查，防止因 body 為空導致錯誤。
- * 2. 使用 try-catch 包裹核心邏輯，捕捉未知錯誤並印出日誌，防止腳本崩潰。
- * 3. 優化日誌輸出，方便排查問題。
+ * v3.0 更新日誌:
+ * 1. 改用正規表示式進行匹配，解決因程式碼壓縮導致的空格不一致問題。
+ * 2. 提升了腳本的健壯性和未來適用性。
  */
 
-// 使用 try-catch 包裹所有程式碼，捕捉任何潛在的錯誤
 try {
-  // 安全檢查：確認 $response 和 $response.body 都存在
   if ($response && $response.body) {
     let body = $response.body;
 
-    // 要尋找的錯誤程式碼片段
-    const wrongCode = '(await Rg.getCountry()).catch(a => "JP")';
-    // 要替換成的正確程式碼片段
-    const correctCode = 'await Rg.getCountry().catch(a => "JP")';
+    // 錯誤程式碼的「正規表示式」
+    // \s* 代表匹配零個或多個空格，可以適應 a=>"JP" 和 a => "JP" 等各種情況
+    // 我們需要對原始程式碼中的特殊字元進行轉義，例如 ( ) .
+    const wrongCodeRegex = /\(await Rg\.getCountry\(\)\)\.catch\(a\s*=>\s*"JP"\)/;
 
-    if (body.includes(wrongCode)) {
-      body = body.replace(wrongCode, correctCode);
-      console.log("✅ [fix_web_error.js] 成功修復 JS 錯誤！");
+    // 正確的程式碼字串
+    const correctCode = 'await Rg.getCountry().catch(a=>"JP")';
+
+    // 使用正規表示式的 .test() 方法來檢查是否存在匹配
+    if (wrongCodeRegex.test(body)) {
+      // 使用正規表示式進行替換
+      body = body.replace(wrongCodeRegex, correctCode);
+      console.log("✅ [fix_web_error.js] 成功透過「正規表示式」修復 JS 錯誤！");
       $done({ body });
     } else {
       console.log("ℹ️ [fix_web_error.js] 腳本執行完畢，但未找到需修復的程式碼。");
       $done({});
     }
   } else {
-    // 如果 $response.body 不存在，印出日誌並安全退出
     console.log("⚠️ [fix_web_error.js] $response.body 為空，腳本略過執行。");
     $done({});
   }
 } catch (error) {
-  // 如果 try 區塊中的任何程式碼出錯，捕捉錯誤並印出詳細資訊
   console.log(`❌ [fix_web_error.js] 腳本執行時發生嚴重錯誤: ${error}`);
-  // 安全退出，不做任何修改
   $done({});
 }
