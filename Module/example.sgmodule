@@ -3,7 +3,7 @@
 
 [Script]
 # 精準匹配您提供的 JS 檔案 URL
-fix_arcaea_script = type=http-response, pattern=https://arcaea.lowiro.com/assets/index-Bmh6JnCs.js, requires-body=1, script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/fix_web_error.js
+fix_arcaea_script = type=http-response, pattern=https://arcaea.lowiro.com/assets/index-Bp1c46DY.js, requires-body=1, script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/fix_web_error.js
 [MITM]
 # 確保 Surge 會解密此網站的流量
 hostname = %APPEND% arcaea.lowiro.com
