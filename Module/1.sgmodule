@@ -1,5 +1,5 @@
 #!name=Bilibili 空降助手
-#!desc=仅保留 Sparkle SponsorBlock（空降助手），最小可用
+#!desc=仅保留 Sparkle SponsorBlock（空降助手）
 #!category=Enhancement
 #!arguments=空降助手:bilibili.airborne,空降助手策略:DIRECT,日志等级:4
 #!arguments-desc=空降助手: 默认开启，配置为"#"时关闭\n\n空降助手策略: 默认直连，建议配置为代理策略\n\n日志等级\n- 1: DEBUG\n- 2: INFO\n- 3: WARN\n- 4: ERROR\n- 5: OFF
@@ -10,23 +10,9 @@ DOMAIN,bsbsb.top,{{{空降助手策略}}}
 
 
 [Script]
-{{{空降助手}}} = type=http-request,\
-pattern=^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$,\
-argument="{"logLevel":"{{{日志等级}}}"}",\
-requires-body=1,\
-binary-body-mode=1,\
-max-size=-1,\
-engine=webview,\
-timeout=10,\
-script-path=https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.request.js
-bilibili.protobuf = type=http-response,\
-pattern=^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.(app\.(view(unite)?\.v1\.View\/(View|ViewProgress|RelatesFeed)|playurl\.v1\.PlayURL\/PlayView|playerunite\.v1\.Player\/PlayViewUnite)|pgc\.gateway\.player\.v2\.PlayURL\/PlayView)$,\
-argument="{"sponsorBlock":"{{{空降助手}}}","logLevel":"{{{日志等级}}}"}",\
-requires-body=1,\
-binary-body-mode=1,\
-max-size=-1,\
-engine=webview,\
-script-path=https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.response.js
+{{{空降助手}}} = type=http-request,pattern=^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$,argument={"logLevel":"{{{日志等级}}}"},requires-body=1,binary-body-mode=1,max-size=-1,engine=webview,timeout=10,script-path=https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.request.js
+
+bilibili.protobuf = type=http-response,pattern=^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.(app\.(view(unite)?\.v1\.View\/(View|ViewProgress|RelatesFeed)|playurl\.v1\.PlayURL\/PlayView|playerunite\.v1\.Player\/PlayViewUnite)|pgc\.gateway\.player\.v2\.PlayURL\/PlayView)$,argument={"sponsorBlock":"{{{空降助手}}}","logLevel":"{{{日志等级}}}"},requires-body=1,binary-body-mode=1,max-size=-1,engine=webview,script-path=https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.response.js
 
 
 [MITM]
