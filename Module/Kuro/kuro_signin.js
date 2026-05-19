@@ -6,6 +6,8 @@
 
 const API_HOST = "https://api.kurobbs.com";
 const WUWA_GAME_ID = "3";
+const WUWA_SERVER_ID = "76402e5b20be2c39f095a152090afddc";
+const WEBVIEW_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KuroGameBox/2.2.0";
 const token = $persistentStore.read("kuro_user_token");
 
 if (!token) {
@@ -71,13 +73,16 @@ async function wuwaGameSignIn() {
   if (!role) return "鸣潮奖励签到：未找到绑定角色";
 
   const reqMonth = pad2(new Date().getMonth() + 1);
-  const body = formEncode({
-    gameId: WUWA_GAME_ID,
-    serverId: role.serverId,
-    roleId: role.roleId,
-    userId: role.userId,
-    reqMonth,
-  });
+  const body = gameSignBody(role, reqMonth);
+  const initJson = await postForm("/encourage/signIn/initSignInV2", gameSignBody(role), gameHeaders());
+
+  if (isSuccess(initJson) && initJson.data && initJson.data.isSigIn === true) {
+    return "鸣潮奖励签到：今日已签到（" + formatRole(role) + "）";
+  }
+  if (!isSuccess(initJson)) {
+    throw apiError("获取鸣潮签到状态", initJson);
+  }
+
   const signJson = await postForm("/encourage/signIn/v2", body, gameHeaders());
 
   if (isSuccess(signJson)) {
@@ -86,6 +91,19 @@ async function wuwaGameSignIn() {
 
   if (signJson.code === 1511) return "鸣潮奖励签到：今日已签到（" + formatRole(role) + "）";
   throw apiError("鸣潮奖励签到", signJson);
+}
+
+function gameSignBody(role, reqMonth) {
+  const data = {
+    gameId: WUWA_GAME_ID,
+    serverId: role.serverId || WUWA_SERVER_ID,
+    roleId: role.roleId,
+    userId: role.userId,
+  };
+  if (reqMonth) {
+    data.reqMonth = reqMonth;
+  }
+  return formEncode(data);
 }
 
 function postForm(path, body, headers) {
@@ -142,21 +160,19 @@ function appHeaders(withCharset) {
 
 function gameHeaders() {
   return {
-    pragma: "no-cache",
-    "cache-control": "no-cache",
-    accept: "application/json, text/plain, */*",
+    Accept: "application/json, text/plain, */*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+    Connection: "keep-alive",
+    Host: "api.kurobbs.com",
+    Origin: "https://web-static.kurobbs.com",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "User-Agent": WEBVIEW_UA,
+    "Content-Type": "application/x-www-form-urlencoded",
+    devCode: "10.0.2.233, " + WEBVIEW_UA,
     source: "android",
-    "user-agent": "Mozilla/5.0 (Linux; Android 13; 2211133C Build/TKQ1.220905.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.131 Mobile Safari/537.36 Kuro/1.0.9 KuroGameBox/1.0.9",
     token,
-    "content-type": "application/x-www-form-urlencoded",
-    origin: "https://web-static.kurobbs.com",
-    "x-requested-with": "com.kurogame.kjq",
-    "sec-fetch-site": "same-site",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-dest": "empty",
-    "accept-encoding": "gzip, deflate, br",
-    "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    host: "api.kurobbs.com",
   };
 }
 
