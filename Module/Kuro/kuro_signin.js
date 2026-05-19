@@ -19,8 +19,8 @@ async function run() {
   const messages = [];
 
   try {
-    messages.push(await communitySignIn());
-    messages.push(await wuwaGameSignIn());
+    messages.push(await captureResult(communitySignIn, "社区签到"));
+    messages.push(await captureResult(wuwaGameSignIn, "鸣潮奖励签到"));
     notify("库街区签到完成", messages.filter(Boolean).join("\n"), "");
   } catch (error) {
     console.log("[Kurobbs] 签到失败: " + stringifyError(error));
@@ -31,7 +31,13 @@ async function run() {
 }
 
 async function communitySignIn() {
-  const json = await postForm("/user/signIn", "gameId=" + WUWA_GAME_ID, appHeaders());
+  let json = await postForm("/user/signIn", "gameId=" + WUWA_GAME_ID, appHeaders());
+
+  // The community sign-in API signs the account once regardless of gameId, but
+  // some server versions reject gameId=3 with "参数错误". Keep 2 as a fallback.
+  if (json && json.msg === "参数错误") {
+    json = await postForm("/user/signIn", "gameId=2", appHeaders());
+  }
 
   if (isSuccess(json)) {
     const day = json.data && json.data.continueDays ? json.data.continueDays : "?";
@@ -43,6 +49,15 @@ async function communitySignIn() {
 
   if (json.code === 1511) return "社区签到：今日已签到";
   throw apiError("社区签到", json);
+}
+
+async function captureResult(task, name) {
+  try {
+    return await task();
+  } catch (error) {
+    console.log("[Kurobbs] " + name + "失败: " + stringifyError(error));
+    return name + "失败：" + (error.message || "未知错误");
+  }
 }
 
 async function wuwaGameSignIn() {
@@ -104,23 +119,24 @@ function postForm(path, body, headers) {
 
 function appHeaders(withCharset) {
   return {
-    osversion: "Android",
-    devcode: "2fba3859fe9bfe9099f2696b8648c2c6",
+    osVersion: "Android",
+    devCode: "2fba3859fe9bfe9099f2696b8648c2c6",
     distinct_id: "765485e7-30ce-4496-9a9c-a2ac1c03c02c",
-    countrycode: "CN",
+    countryCode: "CN",
     ip: "10.0.2.233",
     model: "2211133C",
     source: "android",
     lang: "zh-Hans",
     version: "1.0.9",
-    versioncode: "1090",
+    versionCode: "1090",
     token,
-    "content-type": withCharset
+    Cookie: "user_token=" + token,
+    "Content-Type": withCharset
       ? "application/x-www-form-urlencoded; charset=utf-8"
       : "application/x-www-form-urlencoded",
-    "accept-encoding": "gzip",
-    "user-agent": "okhttp/3.10.0",
-    host: "api.kurobbs.com",
+    "Accept-Encoding": "gzip",
+    "User-Agent": "okhttp/3.10.0",
+    Host: "api.kurobbs.com",
   };
 }
 
