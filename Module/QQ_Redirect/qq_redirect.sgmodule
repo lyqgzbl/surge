@@ -1,0 +1,9 @@
+#!name=QQ链接解锁
+#!desc=解除QQ内访问非白名单之外的地址提示停止访问该页面的限制，并移除跟踪参数。使用前需要清除QQ缓存数据。
+#!category=lyqgzbl
+
+[Script]
+qq.redirect = type=http-request,pattern=^https:\/\/(c\.pc\.qq\.com\/(middlem|middlect|index|ios)\.html|pingtas\.qq\.com\/webview\/pingd|cgi\.connect\.qq\.com\/qqconnectopen\/get_urlinfoForQQV2),script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/QQ_Redirect/qq_redirect.js,timeout=5
+
+[MITM]
+hostname = %APPEND% pingtas.qq.com, c.pc.qq.com, cgi.connect.qq.com
