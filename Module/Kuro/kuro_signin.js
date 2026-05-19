@@ -74,7 +74,8 @@ async function wuwaGameSignIn() {
 
   const reqMonth = pad2(new Date().getMonth() + 1);
   const body = gameSignBody(role, reqMonth);
-  const initJson = await postForm("/encourage/signIn/initSignInV2", gameSignBody(role), gameHeaders());
+  const initBody = gameSignBody(role);
+  const initJson = await postForm("/encourage/signIn/initSignInV2", initBody, gameHeaders());
 
   if (isSuccess(initJson) && initJson.data && initJson.data.isSigIn === true) {
     return "鸣潮奖励签到：今日已签到（" + formatRole(role) + "）";
@@ -90,6 +91,12 @@ async function wuwaGameSignIn() {
   }
 
   if (signJson.code === 1511) return "鸣潮奖励签到：今日已签到（" + formatRole(role) + "）";
+
+  const checkJson = await postForm("/encourage/signIn/initSignInV2", initBody, gameHeaders());
+  if (isSuccess(checkJson) && checkJson.data && checkJson.data.isSigIn === true) {
+    return "鸣潮奖励签到成功：" + formatRole(role) + "（状态已确认）";
+  }
+
   throw apiError("鸣潮奖励签到", signJson);
 }
 
