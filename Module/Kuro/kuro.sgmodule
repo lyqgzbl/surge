@@ -7,6 +7,7 @@
 [Script]
 kuro.token = type=http-request,pattern=^https:\/\/api\.kurobbs\.com\/,script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/Kuro/kuro_cookie.js,timeout=5
 kuro.signin = type=cron,cronexp="{{{签到时间}}}",script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/Kuro/kuro_signin.js,timeout=30
+kuro.daily-tasks = type=cron,cronexp="{{{签到时间}}}",script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/Kuro/kuro_daily_tasks.js,timeout=60
 
 [MITM]
 hostname = %APPEND% api.kurobbs.com
