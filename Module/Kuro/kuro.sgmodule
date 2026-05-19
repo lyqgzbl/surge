@@ -1,6 +1,6 @@
 #!name=库街区签到
 #!desc=自动抓取库街区 user_token，并每日执行社区签到与鸣潮游戏奖励签到。需要启用 MITM 并信任证书。
-#!category=Enhancement
+#!category=lyqgzbl
 #!arguments=签到时间:0 8 * * *
 #!arguments-desc=签到时间: 使用 Surge cron 表达式，默认每天 08:00 执行；例如 "30 9 * * *" 表示每天 09:30。
 
