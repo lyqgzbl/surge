@@ -37,7 +37,37 @@ for (var i = 0; i < redirectRules.length; i++) {
   }
 }
 
+function shouldNotify() {
+  if (typeof $argument === "undefined" || !$argument) {
+    return true;
+  }
+  try {
+    var arg = JSON.parse($argument);
+    if (typeof arg.notify !== "undefined") {
+      return arg.notify === true || arg.notify === "true";
+    }
+  } catch (e) {
+    if ($argument === "false") {
+      return false;
+    }
+  }
+  return true;
+}
+
 if (targetUrl) {
+  if (shouldNotify() && typeof $notification !== "undefined") {
+    $notification.post(
+      "QQ 链接已解锁",
+      "点击在 Safari 中打开",
+      targetUrl,
+      {
+        "action": "open-url",
+        "url": targetUrl,
+        "auto-dismiss": 10,
+      }
+    );
+  }
+
   $done({
     response: {
       status: 307,
