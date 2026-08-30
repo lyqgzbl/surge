@@ -38,34 +38,41 @@ for (var i = 0; i < redirectRules.length; i++) {
 }
 
 function shouldNotify() {
-  if (typeof $argument === "undefined" || !$argument) {
+  if (typeof $argument === "undefined" || $argument === null || $argument === "") {
     return true;
   }
+  if ($argument === "false" || $argument === false) {
+    return false;
+  }
   try {
-    var arg = JSON.parse($argument);
-    if (typeof arg.notify !== "undefined") {
+    var arg = typeof $argument === "string" ? JSON.parse($argument) : $argument;
+    if (typeof arg === "boolean") {
+      return arg;
+    }
+    if (typeof arg === "object" && arg !== null && typeof arg.notify !== "undefined") {
       return arg.notify === true || arg.notify === "true";
     }
-  } catch (e) {
-    if ($argument === "false") {
-      return false;
-    }
-  }
+  } catch (e) {}
   return true;
 }
 
 if (targetUrl) {
   if (shouldNotify() && typeof $notification !== "undefined") {
-    $notification.post(
-      "QQ 链接已解锁",
-      "点击在 Safari 中打开",
-      targetUrl,
-      {
-        "action": "open-url",
-        "url": targetUrl,
-        "auto-dismiss": 10,
-      }
-    );
+    try {
+      $notification.post(
+        "QQ 链接已解锁",
+        "点击在 Safari 中打开",
+        targetUrl,
+        {
+          "action": "open-url",
+          "url": targetUrl,
+          "auto-dismiss": true,
+          "sound": true,
+        }
+      );
+    } catch (err) {
+      console.log("QQ Redirect Notification Error: " + err);
+    }
   }
 
   $done({

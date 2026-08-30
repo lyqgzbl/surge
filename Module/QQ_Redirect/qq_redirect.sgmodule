@@ -1,11 +1,11 @@
 #!name=QQ链接解锁
 #!desc=解除QQ内访问非白名单之外的地址提示停止访问该页面的限制，并移除跟踪参数。支持推送横幅通知，点击可在 Safari 中直接打开。使用前需要清除QQ缓存数据。
 #!category=lyqgzbl
-#!arguments=推送Safari通知:true
-#!arguments-desc=推送Safari通知: 捕获到目标链接时是否弹出横幅通知，点击可直接在 Safari 中打开。\n- true: 开启 (默认)\n- false: 关闭
+#!arguments=notify_safari:true
+#!arguments-desc=notify_safari: 捕获到目标链接时是否弹出横幅通知，点击可在 Safari 中直接打开。\n- true: 开启 (默认)\n- false: 关闭
 
 [Script]
-qq.redirect = type=http-request,pattern=^https:\/\/(c\.pc\.qq\.com\/(middlem|middlect|index|ios)\.html|pingtas\.qq\.com\/webview\/pingd|cgi\.connect\.qq\.com\/qqconnectopen\/get_urlinfoForQQV2),argument={"notify":{{{推送Safari通知}}}},script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/QQ_Redirect/qq_redirect.js,timeout=5
+qq.redirect = type=http-request,pattern=^https:\/\/(c\.pc\.qq\.com\/(middlem|middlect|index|ios)\.html|pingtas\.qq\.com\/webview\/pingd|cgi\.connect\.qq\.com\/qqconnectopen\/get_urlinfoForQQV2),argument={{{notify_safari}}},script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/QQ_Redirect/qq_redirect.js,timeout=5
 
 [MITM]
 hostname = %APPEND% pingtas.qq.com, c.pc.qq.com, cgi.connect.qq.com
