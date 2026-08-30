@@ -1,80 +1,50 @@
+# Bilibili 空降助手 (SponsorBlock)
 
-# Bilibili 空降助手（白色版专用）
-
-⚠️ **重要声明**  
-本模块 **仅适用于已停止维护的「白色版本 Bilibili 客户端」**。  
-**不适用于当前官方最新版 Bilibili App**，使用新版客户端将无法生效。
+这是一个专用于 **Surge** 的哔哩哔哩空降助手独立模块。从 [Sparkle](https://github.com/kokoryh/Sparkle) 中抽取出 **纯净的 SponsorBlock / 空降助手** 功能，**不包含** 原版模块中的任何去广告、动态流过滤、置顶评论过滤或界面修改。
 
 ---
 
-## 📌 模块简介
+## ✨ 核心特性
 
-这是一个用于 **Surge** 的模块，目标是在 **白色版 Bilibili 客户端** 中实现：
-
-- SponsorBlock / 空降助手功能  
-- 自动跳过视频中的赞助、推广等时间段  
-
-模块已进行最小化裁剪，仅保留空降助手所必需的逻辑，以确保对旧客户端 protobuf 接口的兼容性。
-
----
-
-## 🧬 代码来源说明
-
-本模块所使用的核心脚本并非原创实现，而是基于以下上游项目：
-
-### 上游项目
-- **Sparkle**
-  - 作者：@kokoryh
-  - 项目地址：https://github.com/kokoryh/Sparkle
-
-### 使用的代码基线
-- 基于 Sparkle 的 **旧版本 protobuf SponsorBlock 实现**
-- 参考提交（commit）：
-  ```
-  93c3c2a31932bb7e2f79bfcffa506b722b912859
-  ```
-
-### 本仓库所做的修改
-- 固定旧版 SponsorBlock 逻辑，避免上游接口变更导致失效
-- 移除广告、动态、评论区等无关功能
-- 保留对白色版 Bilibili protobuf 接口结构的兼容
-- 封装为可独立使用的 Surge 模块
-
-所有核心逻辑的版权与设计思路均归原作者所有，本仓库仅进行兼容性整理与配置层封装。
+- **纯粹专注**：仅保留空降助手（SponsorBlock）功能，无任何多余的去广告与界面篡改逻辑。
+- **全版本适配**：
+  - ✅ **最新版官方客户端**（支持 `viewunite.v1.View/ViewProgress` 新架构）
+  - ✅ **iPad HD / 国际版 / 旧版客户端**（支持 `view.v1.View/ViewProgress`）
+- **性能极佳**：
+  - 仅精准拦截 `DmSegMobile` 与 `ViewProgress` 两个接口，无额外网络开销。
+  - 请求阶段并发拉取 SponsorBlock 跳过片段与真实弹幕，降低首屏播放延迟。
 
 ---
 
-## 🚫 适用范围说明
+## ⚙️ 参数配置
 
-白色版 Bilibili 客户端具有以下特征：
-
-- 已停止维护
-- 使用旧版 protobuf 接口结构
-- 不支持或不完整支持 ViewUnite / PlayerUnite 等新接口
-
-Sparkle 的新版本脚本已假设客户端支持新版 protobuf 结构，因此对白色版客户端天然不兼容。
-
-**结论：**
-- 白色版 Bilibili + 新版 Sparkle JS：❌ 不生效  
-- 白色版 Bilibili + 旧版 Sparkle JS：✅ 可用且稳定  
-
-本模块仅针对后一种情况设计。
+| 参数 | 可选值 / 格式 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| **空降助手** | `bilibili.airborne` / `#` | `bilibili.airborne` | 默认开启，配置为 `#` 时关闭 |
+| **空降助手策略** | Surge 策略名 | `DIRECT` | 默认直连；若 `bsbsb.top` 连接不稳定可配置为代理策略 |
+| **日志等级** | `1` / `2` / `3` / `4` / `5` | `4` | `1`: DEBUG; `2`: INFO; `3`: WARN; `4`: ERROR; `5`: OFF |
 
 ---
 
-## ⚠️ 使用注意事项
+## 📦 安装地址
 
-- 不保证未来长期可用性
-- 不支持官方最新版 Bilibili 客户端
-- 不建议与其他 Bilibili 增强模块同时启用
-- 仅建议用于个人自用与技术研究
-
-如已使用新版 Bilibili 客户端，请直接使用 Sparkle 官方最新模块。
+```text
+https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/Bilibili_Airborne/bilibili.sgmodule
+```
 
 ---
 
-## 📄 免责声明
+## 🧬 原理说明
 
-本项目仅用于技术研究、协议分析与客户端兼容性学习。  
-请勿用于任何商业用途。  
-因使用本模块产生的任何后果，需由使用者自行承担。
+1. **响应阶段（Chronos 补丁注入）**：
+   - 拦截 `ViewProgress` 接口，将播放器 `chronos` 替换为带有空降助手能力的播放器补丁（源自 `kokoryh/chronos`）。
+2. **请求阶段（弹幕指令注入）**：
+   - 拦截 `DmSegMobile` 弹幕段请求，向 `bsbsb.top` 查询当前视频/分P的 SponsorBlock 标记。
+   - 当存在跳过片段（`skip` 且长度 $\ge$ 8 秒）时，将特殊空降指令弹幕（`airborne:${end}`）合并入分段弹幕列表中供 Chronos 播放器触发精准跳转。
+
+---
+
+## 鸣谢
+
+- 上游项目：[Sparkle](https://github.com/kokoryh/Sparkle) by [@kokoryh](https://github.com/kokoryh)
+- 跳过数据库：[bsbsb.top](https://bsbsb.top)
