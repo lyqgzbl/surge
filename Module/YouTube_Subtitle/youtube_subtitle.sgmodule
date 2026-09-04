@@ -1,23 +1,16 @@
 #!name=YouTube AI 双语字幕
-#!desc=基于 OpenAI completions 协议的 YouTube 智能字幕翻译模块。默认使用 gemini-3.1-flash-lite 模型，支持双语排版（原文/译文上下组合）、自定义 Base URL 与第三方中转。
+#!desc=基于 OpenAI completions 协议的 YouTube 智能字幕翻译模块。默认使用 gemini-3.1-flash-lite 模型, 支持双语排版（原文/译文上下组合）、自定义 Base URL 与第三方中转。
 #!category=lyqgzbl
 #!arguments=api_key,api_base:generativelanguage.googleapis.com/v1beta/openai,model:gemini-3.1-flash-lite,target_lang:zh-Hans,layout:Forward,auto_translate:true
 #!arguments-desc=api_key: OpenAI / Gemini API Key (必填)\n\napi_base: API Base URL (默认: generativelanguage.googleapis.com/v1beta/openai。若使用原生 OpenAI 请改为 api.openai.com/v1，或使用第三方中转如 DeepSeek、OpenRouter 等)\n\nmodel: 模型名称 (默认: gemini-3.1-flash-lite)\n\ntarget_lang: 默认目标翻译语言 (默认: zh-Hans，支持 zh-Hant, en, ja, ko 等)\n\nlayout: 字幕排版模式\n- Forward: 上方原文 / 下方译文 (默认)\n- Reverse: 上方译文 / 下方原文\n- Only: 仅显示译文\n\nauto_translate: 自动翻译非目标语言字幕 (默认: true，开启后若视频原字幕不是目标语言将自动翻译)
 
 [Rule]
-# 屏蔽 initplayback 中可能的空 GIF 请求
 URL-REGEX,^https?:\/\/([\w-]+)\.googlevideo\.com\/initplayback(\?.*oad=.+)$,REJECT-TINYGIF
 
 [Script]
-# 1. 播放器元数据拦截与字幕可用性注入 (Web / Desktop)
 yt_sub_player_req = type=http-request, pattern=^https?:\/\/(www|m|tv)\.youtube\.com\/youtubei\/v1\/player(\?.+)?$, requires-body=1, max-size=-1, script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/YouTube_Subtitle/youtube_subtitle_request.js, timeout=10
-
 yt_sub_player_resp = type=http-response, pattern=^https?:\/\/(www|m|tv)\.youtube\.com\/youtubei\/v1\/player(\?.+)?$, requires-body=1, max-size=-1, script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/YouTube_Subtitle/youtube_subtitle_response.js, timeout=10
-
-# 2. 字幕请求解析与请求改写 (Web & iOS / Android)
 yt_sub_timedtext_req = type=http-request, pattern=^https?:\/\/(www|m)\.youtube\.com\/api\/timedtext(\?.+)?$, requires-body=0, argument="api_key={{{api_key}}}&api_base={{{api_base}}}&model={{{model}}}&target_lang={{{target_lang}}}&layout={{{layout}}}&auto_translate={{{auto_translate}}}", script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/YouTube_Subtitle/youtube_subtitle_request.js, timeout=10
-
-# 3. 字幕内容获取并调用 OpenAI completions 翻译与双语组装
 yt_sub_timedtext_resp = type=http-response, pattern=^https?:\/\/(www|m)\.youtube\.com\/api\/timedtext(\?.+)?$, requires-body=1, max-size=-1, argument="api_key={{{api_key}}}&api_base={{{api_base}}}&model={{{model}}}&target_lang={{{target_lang}}}&layout={{{layout}}}&auto_translate={{{auto_translate}}}", script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/YouTube_Subtitle/youtube_subtitle_response.js, timeout=60
 
 [MITM]
