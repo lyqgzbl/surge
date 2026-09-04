@@ -425,5 +425,11 @@ function getConfigs() {
     }
   }
 
+  if (configs.apiBase) {
+    if (!configs.apiBase.startsWith("http://") && !configs.apiBase.startsWith("https://")) {
+      configs.apiBase = "https://" + configs.apiBase;
+    }
+  }
+
   return configs;
 }
