@@ -94,6 +94,14 @@ function processResponse() {
         if (data.game_drop_info && typeof data.game_drop_info === "object") {
           data.game_drop_info.has_drop = false;
         }
+        // 移除礼物星球与心愿挂件
+        if (data.progress_for_widget && typeof data.progress_for_widget === "object") {
+          data.progress_for_widget.gift_star_process = null;
+          data.progress_for_widget.gift_star_process_v2 = null;
+          data.progress_for_widget.wish_process = null;
+          data.progress_for_widget.star_knight = null;
+        }
+        data.gift_star = null;
       }
 
       // 移除强关注卡片与引导

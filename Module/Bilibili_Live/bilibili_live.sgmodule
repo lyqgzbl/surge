@@ -1,8 +1,8 @@
 #!name=Bilibili 直播去广告
-#!desc=过滤哔哩哔哩直播间悬浮活动挂件、弹窗大卡片广告、强关注引导、电商优惠券弹窗、直播推荐信息流广告及数据埋点日志。基于抓包定制。
+#!desc=过滤哔哩哔哩直播间悬浮活动挂件、礼物星球、弹窗大卡片广告、强关注引导、电商优惠券弹窗、直播推荐信息流广告及数据埋点日志。基于抓包定制。
 #!category=lyqgzbl
 #!arguments=clean_pendant:true,clean_follow_guide:true,clean_shopping:true
-#!arguments-desc=clean_pendant: 移除直播间悬浮活动挂件与浮窗活动 (默认: true)\n\nclean_follow_guide: 移除强关注与弹窗引导卡片 (默认: true)\n\nclean_shopping: 移除直播间购物与优惠券推广 (默认: true)
+#!arguments-desc=clean_pendant: 移除直播间悬浮活动挂件、礼物星球与浮窗活动 (默认: true)\n\nclean_follow_guide: 移除强关注与弹窗引导卡片 (默认: true)\n\nclean_shopping: 移除直播间购物与优惠券推广 (默认: true)
 
 [Rule]
 DOMAIN,line3-h5-mobile-api.biligame.com,REJECT
