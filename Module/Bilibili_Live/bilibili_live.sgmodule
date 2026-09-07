@@ -1,0 +1,16 @@
+#!name=Bilibili 直播去广告
+#!desc=过滤哔哩哔哩直播间悬浮活动挂件、弹窗大卡片广告、强关注引导、电商优惠券弹窗、直播推荐信息流广告及数据埋点日志。基于抓包定制。
+#!category=lyqgzbl
+#!arguments=clean_pendant:true,clean_follow_guide:true,clean_shopping:true
+#!arguments-desc=clean_pendant: 移除直播间悬浮活动挂件与浮窗活动 (默认: true)\n\nclean_follow_guide: 移除强关注与弹窗引导卡片 (默认: true)\n\nclean_shopping: 移除直播间购物与优惠券推广 (默认: true)
+
+[Rule]
+DOMAIN,line3-h5-mobile-api.biligame.com,REJECT
+DOMAIN,cm.bilibili.com,REJECT
+URL-REGEX,^https:\/\/live-trace\.bilibili\.com\/xlive\/data-interface\/v1\/index\/log,REJECT
+
+[Script]
+bilibili_live = type=http-response,pattern=^https:\/\/(?:api\.live|mall)\.bilibili\.com\/(?:xlive\/(?:app-room\/v1\/index\/getInfoBy(?:Room|User)|play-interface\/widgetService\/GetWidgetBannerList|app-interface\/v2\/(?:index\/feed|room\/recList))|mall-cbp\/web\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_room_exclusive_coupon_info),argument="clean_pendant={{{clean_pendant}}}&clean_follow_guide={{{clean_follow_guide}}}&clean_shopping={{{clean_shopping}}}",requires-body=1,max-size=-1,script-path=https://raw.githubusercontent.com/lyqgzbl/surge/refs/heads/main/Module/Bilibili_Live/bilibili_live.js,timeout=10
+
+[MITM]
+hostname = %APPEND% api.live.bilibili.com, mall.bilibili.com
