@@ -4,6 +4,7 @@
 
 [Rule]
 DOMAIN,aegis.qq.com,REJECT
+DOMAIN,api.yidianlingyi.cn,REJECT
 DOMAIN,appcfg.v.qq.com,REJECT
 DOMAIN,article.mp.qq.com,REJECT
 DOMAIN,beacon.cdn.qq.com,REJECT
@@ -39,6 +40,8 @@ DOMAIN,tpstelemetry.tencent.com,REJECT
 DOMAIN,turingminipro.sparta.html5.qq.com,REJECT
 DOMAIN,tux.qq.com,REJECT
 DOMAIN,uapis.cn,REJECT
+DOMAIN,v.streaming.qq.com,REJECT
+DOMAIN,v.terrific.qq.com,REJECT
 DOMAIN,v1.hitokoto.cn,REJECT
 DOMAIN,vv.video.qq.com,REJECT
 DOMAIN,webcard.mp.qq.com,REJECT
@@ -50,12 +53,15 @@ DOMAIN-SUFFIX,gdt.qq.com,REJECT
 DOMAIN-SUFFIX,gdtimg.com,REJECT
 DOMAIN-SUFFIX,kandian.qq.com,REJECT
 DOMAIN-SUFFIX,mdt.qq.com,REJECT
+DOMAIN-SUFFIX,p2p.qq.com,REJECT
 DOMAIN-SUFFIX,pingfore.qq.com,REJECT
 DOMAIN-SUFFIX,pingfore.tencent.com,REJECT
 DOMAIN-SUFFIX,rdt.tfogc.com,REJECT
 DOMAIN-SUFFIX,research.qq.com,REJECT
 URL-REGEX,^https?:\/\/(?:wezone-theme|qq-video)\.cdn-go\.cn\/.*\/invitation_splash_,REJECT
+URL-REGEX,^https?:\/\/appsw.*getNoteTopicList\?,REJECT
 URL-REGEX,^https?:\/\/cdnimg\.3g\.qq\.com\/qq_product_operations\/,REJECT
+URL-REGEX,^https?:\/\/data\.bilibili\.com\/log\/mobile\?ios$,REJECT
 URL-REGEX,^https?:\/\/h5\.qzone\.qq\.com\/(?:report\/|proxy\/domain\/pingfore\.qq\.com\/),REJECT
 URL-REGEX,^https?:\/\/h5speed\.qq\.com\/event\/log$,REJECT
 URL-REGEX,^https?:\/\/i\.gtimg\.cn\/ams-web\/,REJECT
